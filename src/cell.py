@@ -2,9 +2,9 @@ import pygame
 
 class Cell(pygame.sprite.Sprite):
     
-    def __init__(self, pos, images, size=10, offset=0, state=-1):
+    def __init__(self, (x, y), images, size=10, offset=0, state=-1):
         pygame.sprite.Sprite.__init__(self)
-        self.pos = x, y = pos
+        self.pos = x, y
         self.images = images
         self.state = state
         

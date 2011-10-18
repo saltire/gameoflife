@@ -10,10 +10,6 @@ class GameOfLife:
     def __init__(self):
         pygame.init()
         
-        # init clock
-        self.clock = pygame.time.Clock()
-        self.time = self.clock.tick()
-
         # init map
         smap = [
                  '111111011',
@@ -43,10 +39,10 @@ class GameOfLife:
         image = pygame.image.load('cell.png')
         length = image.get_width() / image.get_height()
         image = pygame.transform.scale(image, (self.cellsize * length, self.cellsize))
-        self.images = []
-        for frame in range(image.get_width() / image.get_height()):
-            self.images.append(image.subsurface((frame * self.cellsize, 0, self.cellsize, self.cellsize)))
         self.animlength = length / 2
+        self.images = []
+        for frame in range(length):
+            self.images.append(image.subsurface((frame * self.cellsize, 0, self.cellsize, self.cellsize)))
                     
         # init starting cells
         self.cells = pygame.sprite.RenderUpdates()
@@ -59,40 +55,42 @@ class GameOfLife:
         updates = self.cells.draw(self.window)
         pygame.display.update(updates)
 
-        # start loop
-        self.loop()
-        
-        
-    def loop(self):
+        # init clock, start loop
+        self.clock = pygame.time.Clock()
+        self.time = self.clock.tick()
         while 1:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
+            self.update()
+        
+        
+    def update(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+        
+        oldcells = self.game.cells
+        newcells = self.game.next_generation()
+        
+        for oldcell in self.cells:
+            if oldcell.pos in oldcells - newcells:
+                self.dying.add(oldcell)
             
-            oldcells = self.game.cells
-            newcells = self.game.next_generation()
+        for x, y in newcells - oldcells:
+            newcell = cell.Cell((x, y), self.images, self.cellsize, self.offset)
+            self.cells.add(newcell)
+            self.birthing.add(newcell)
             
-            for oldcell in self.cells:
-                if oldcell.pos in oldcells - newcells:
-                    self.dying.add(oldcell)
-                
-            for x, y in newcells - oldcells:
-                newcell = cell.Cell((x, y), self.images, self.cellsize, self.offset)
-                self.cells.add(newcell)
-                self.birthing.add(newcell)
-                
-            for i in range(self.animlength):
-                self.birthing.update()
-                self.dying.update()
-                updates = self.birthing.draw(self.window) + self.dying.draw(self.window)
-                pygame.display.update(updates)
-                pygame.time.delay(20)
-                
-            pygame.time.delay(100)
-                
-            self.birthing.empty()
-            self.cells.remove(self.dying)
-            self.dying.empty()
+        for i in range(self.animlength):
+            self.birthing.update()
+            self.dying.update()
+            updates = self.birthing.draw(self.window) + self.dying.draw(self.window)
+            pygame.display.update(updates)
+            pygame.time.delay(20)
+            
+        pygame.time.delay(100)
+            
+        self.birthing.empty()
+        self.cells.remove(self.dying)
+        self.dying.empty()
                 
             
             
