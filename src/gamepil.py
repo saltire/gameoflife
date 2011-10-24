@@ -7,14 +7,14 @@ import game
 
 class GamePIL:
 
-    def __init__(self, pattern):
+    def __init__(self, pattern, image):
         self.pattern = pattern
 
         # load starting pattern
         start = set()
-        with open('{0}.txt'.format(pattern), 'r') as smap:
-            self.width, self.height, self.offsetx, self.offsety = [int(num) for num in smap.readline().strip().split(',')]
-            for y, line in enumerate(smap.readlines()):
+        with open(os.path.join('..', 'patterns', '{0}.txt'.format(pattern)), 'r') as pfile:
+            self.width, self.height, self.offsetx, self.offsety = [int(num) for num in pfile.readline().strip().split(',')]
+            for y, line in enumerate(pfile.readlines()):
                 for x, value in enumerate(line):
                     if value == '.':
                         start.add((x, y))
@@ -24,7 +24,7 @@ class GamePIL:
         self.cells = self.game.cells
 
         # load and slice cell sprite
-        sprite = Image.open('cell8.png')
+        sprite = Image.open(os.path.join('..', 'images', '{0}.png'.format(image)))
         width, height = sprite.size
         length = width / height
         self.animlength = length / 2
@@ -90,7 +90,7 @@ class GamePIL:
                 
                 
 if __name__ == '__main__':
-    galaxy = GamePIL('galaxy')
-    galaxy.draw('d:\projects\gameoflife', 8)
+    galaxy = GamePIL('spacefiller', 'circle8')
+    galaxy.draw('d:\projects\gameoflife', 100, 5, 4)
     
             
