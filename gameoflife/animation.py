@@ -6,7 +6,7 @@ import game
 
 
 class Animation:
-    def __init__(self, cells, spritepath, (width, height), offset=(0, 0), cellsize=None):
+    def __init__(self, cells, spritepath, (width, height), cellsize=None):
         self.cellmap = cells
         self.game = game.game_of_life(cells)
         
@@ -33,14 +33,13 @@ class Animation:
         self.window = pygame.display.set_mode((width * self.cellsize, height * self.cellsize))
         self.background = pygame.surface.Surface(self.window.get_size())
         self.background.fill((255, 255, 255))
-        self.offset = offset
         
         # init groups and starting cells
         self.cells = pygame.sprite.RenderUpdates()
         self.birthing = pygame.sprite.RenderUpdates()
         self.dying = pygame.sprite.RenderUpdates()
         for x, y in self.cellmap:
-            self.cells.add(Cell((x, y), self.frames, self.cellsize, self.offset, self.animlength - 1))
+            self.cells.add(Cell((x, y), self.frames, self.cellsize, self.animlength - 1))
                     
         # draw starting cells
         self.window.blit(self.background, (0, 0))
@@ -60,7 +59,7 @@ class Animation:
             
             # add cells created this generation to birthing group
             for pos in self.cellmap - oldcellmap:
-                newcell = Cell(pos, self.frames, self.cellsize, self.offset)
+                newcell = Cell(pos, self.frames, self.cellsize)
                 self.cells.add(newcell)
                 self.birthing.add(newcell)
                 
@@ -89,14 +88,14 @@ class Animation:
 
 
 class Cell(pygame.sprite.Sprite):
-    def __init__(self, (x, y), images, size=10, (left, top)=(0, 0), frame=-1):
+    def __init__(self, (x, y), images, size=10, frame=-1):
         pygame.sprite.Sprite.__init__(self)
         
         self.pos = x, y
         self.frames = images
         self.frame = frame
         
-        self.rect = pygame.Rect(((x + left) * size, (y + top) * size, size, size))
+        self.rect = pygame.Rect((x * size, y * size, size, size))
         self.image = self.frames[self.frame]
         
         

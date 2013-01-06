@@ -7,7 +7,7 @@ import game
 
 
 class ImageGen:
-    def __init__(self, cells, spritepath, (width, height), offset=(0, 0), cellsize=None):
+    def __init__(self, cells, spritepath, (width, height), cellsize=None):
         # init game generator
         self.cells = cells
         self.game = game.game_of_life(cells)
@@ -25,16 +25,14 @@ class ImageGen:
             self.cellsize = cellsize
             antialias = Image.ANTIALIAS if cellsize < sheight else Image.BILINEAR
             sprite = sprite.resize((cellsize * length, cellsize), antialias)
+            
+        self.size = (width * self.cellsize, height * self.cellsize)
         
         # slice sprite into frames
         self.frames = [sprite.crop((frame * self.cellsize, 0,
                                     (frame + 1) * self.cellsize, self.cellsize))
                        for frame in range(length)]
         
-        # init size and offset
-        self.size = (width * self.cellsize, height * self.cellsize)
-        self.offset = offset
-
         
     def draw(self, outpath, gencount, speed=1, outname='image'):
         """Draw (gencount) number of generations. Resize cells to (cellsize).
@@ -44,7 +42,6 @@ class ImageGen:
             os.makedirs(outpath)
         
         # set image attributes
-        left, top = self.offset
         total = gencount * self.animlength / speed
         pad = int(math.log10(total)) + 1 # zero padding on each frame number
         update = 10
@@ -54,7 +51,7 @@ class ImageGen:
         self.image = Image.new('RGBA', self.size, (0, 0, 0, 0))
         for x, y in self.cells:
             self.image.paste(self.frames[self.animlength - 1],
-                             ((x + left) * self.cellsize, (y + top) * self.cellsize))
+                             (x * self.cellsize, y * self.cellsize))
 
         for gen in range(gencount):
             # get next generation
@@ -74,10 +71,10 @@ class ImageGen:
                 # draw next frame
                 for x, y in birthing:
                     self.image.paste(self.frames[state],
-                                     ((x + left) * self.cellsize, (y + top) * self.cellsize))
+                                     (x * self.cellsize, y * self.cellsize))
                 for x, y in dying:
                     self.image.paste(self.frames[state + self.animlength],
-                                     ((x + left) * self.cellsize, (y + top) * self.cellsize))
+                                     (x * self.cellsize, y * self.cellsize))
                 
             self.cells = newcells
 
