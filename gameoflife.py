@@ -1,5 +1,6 @@
-from gameoflife import imagegen
-from gameoflife import animation
+from gameoflife import game
+from gameoflife.imagegen import ImageGen
+from gameoflife.animation import Animation
 
 
 class GameOfLife:
@@ -18,13 +19,12 @@ class GameOfLife:
 
 
     def render_images(self, spritepath, gencount, outpath='.', cellsize=None):
-        imagegen.ImageGen(self.cells, spritepath).draw(outpath, gencount, self.dims, 
-                                                       self.offset, cellsize)
+        ImageGen(self.cells, spritepath, self.dims, self.offset, cellsize
+                 ).draw(outpath, gencount)
         
         
     def show_animation(self, spritepath, cellsize=None):
-        animation.Animation(self.cells, spritepath, self.dims,
-                            self.offset, cellsize).run()
+        Animation(self.cells, spritepath, self.dims, self.offset, cellsize).run()
         
         
 
@@ -32,5 +32,5 @@ if __name__ == '__main__':
     patternpath = 'patterns/galaxy.txt'
     spritepath = 'sprites/circle8.png'
     
-    #GameOfLife(patternpath).show_animation(spritepath, 50)
-    GameOfLife(patternpath).render_images(spritepath, 4, './images', 25)
+    GameOfLife(patternpath).show_animation(spritepath, 25)
+    #GameOfLife(patternpath).render_images(spritepath, 4, './images', 25)

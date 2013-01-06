@@ -7,20 +7,26 @@ import game
 
 class Animation:
     def __init__(self, cells, spritepath, (width, height), offset=(0, 0), cellsize=None):
-        pygame.init()
-        
-        # init cell map
         self.cellmap = cells
         self.game = game.game_of_life(cells)
         
-        # load, resize and slice cell sprite
+        pygame.init()
+        
+        # load cell sprite
         sprite = pygame.image.load(spritepath)
         length = sprite.get_width() / sprite.get_height()
         self.animlength = length / 2
-        self.cellsize = sprite.get_height() if cellsize is None else cellsize
-        sprite = pygame.transform.scale(sprite, (self.cellsize * length, self.cellsize))
         
-        self.frames = [sprite.subsurface((frame * self.cellsize, 0, self.cellsize, self.cellsize))
+        # set cell size and resize sprite if necessary
+        if cellsize is None:
+            self.cellsize = sprite.get_height()
+        else:
+            self.cellsize = cellsize
+            sprite = pygame.transform.scale(sprite, (cellsize * length, cellsize))
+        
+        # slice sprite into frames
+        self.frames = [sprite.subsurface((frame * self.cellsize, 0,
+                                          self.cellsize, self.cellsize))
                        for frame in range(length)]
                     
         # init window, background and offset
@@ -37,8 +43,9 @@ class Animation:
             self.cells.add(Cell((x, y), self.frames, self.cellsize, self.offset, self.animlength - 1))
                     
         # draw starting cells
-        updates = self.cells.draw(self.window)
-        pygame.display.update(updates)
+        self.window.blit(self.background, (0, 0))
+        self.cells.draw(self.window)
+        pygame.display.update()
 
 
     def run(self, framedelay=20, gendelay=100):
