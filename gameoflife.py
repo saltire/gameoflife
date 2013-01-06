@@ -4,10 +4,10 @@ from gameoflife.pattern import Pattern
 
 
 if __name__ == '__main__':
-    pattern = Pattern('patterns/vship.png')
+    pattern = Pattern('patterns/blinkingeye.png')
     spritepath = 'sprites/circle8.png'
     outpath = './images'
-    cellsize = 25
+    cellsize = 40
     gencount = 8
     
     # generate a set of images

@@ -37,7 +37,6 @@ class ImageGen:
     def draw(self, outpath, gencount, speed=1, outname='image'):
         """Draw (gencount) number of generations. Resize cells to (cellsize).
         Draw every (speed)th frame. speed must be a factor of self.animlength."""
-        
         if not os.path.exists(outpath):
             os.makedirs(outpath)
         

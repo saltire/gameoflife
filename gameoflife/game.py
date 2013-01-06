@@ -1,5 +1,7 @@
 
 def game_of_life(cells):
+    """This is a generator implementing Conway's Game of Life. Given a 2D array
+    of cells, each iteration will yield the next generation of cells."""
     while True:
         xmin = min(x for x, y in cells)
         ymin = min(y for x, y in cells)

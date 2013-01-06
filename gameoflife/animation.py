@@ -22,7 +22,7 @@ class Animation:
             self.cellsize = sprite.get_height()
         else:
             self.cellsize = cellsize
-            sprite = pygame.transform.scale(sprite, (cellsize * length, cellsize))
+            sprite = pygame.transform.smoothscale(sprite, (cellsize * length, cellsize))
         
         # slice sprite into frames
         self.frames = [sprite.subsurface((frame * self.cellsize, 0,
@@ -45,9 +45,14 @@ class Animation:
         self.window.blit(self.background, (0, 0))
         self.cells.draw(self.window)
         pygame.display.update()
+        
+        # init clock
+        self.clock = pygame.time.Clock()
 
 
-    def run(self, framedelay=20, gendelay=100):
+    def run(self, framerate=24, gendelay=2):
+        """Run the animation at (framerate) frames per second.
+        Pause for (gendelay) frames after each generation."""
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -73,17 +78,18 @@ class Animation:
                 self.birthing.update()
                 self.dying.update()
                 
+                self.clock.tick(framerate)
+                
                 self.window.blit(self.background, (0, 0))
                 pygame.display.update(self.cells.draw(self.window))
-                
-                pygame.time.delay(framedelay)
                 
             # remove dead cells, and reset groups
             self.cells.remove(self.dying)
             self.birthing.empty()
             self.dying.empty()
 
-            pygame.time.delay(gendelay)
+            for _ in range(gendelay):
+                self.clock.tick(framerate)
             
 
 
